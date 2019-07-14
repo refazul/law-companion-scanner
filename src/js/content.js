@@ -4,7 +4,9 @@ import {
     dom_search_by_text_all,
     string_purge,
     string_contains,
-    string_number_get
+    string_number_get,
+    window_close,
+    url_param_get_by_name
 } from './lib.js';
 
 console.log('Content');
@@ -22,10 +24,10 @@ function do_something(request, sender, sendResponse) {
 }
 
 function scanCause() {
-    var i = 1;
     var court_name = court_name_get();
     var court_date = court_date_get();
 
+    var cause_objects = [];
     var active_heading = false;
     var tr_all = document.querySelectorAll('form[name="form1"] table tr');
     tr_all.forEach(function (cause, index) {
@@ -48,12 +50,24 @@ function scanCause() {
                 cause_obj.case_heading = active_heading;
                 cause_obj.case_parties = string_purge(cause.querySelectorAll('td')[2].innerText);
                 console.log(cause_obj);
-                ajax_post('http://localhost:3000/api/v1/causes', cause_obj, (res) => {
-                    console.log(res);
-                });
+                cause_objects.push(cause_obj);
             }
         }
-    })
+    });
+
+    var success_count = 0;
+    for (var i = 0; i < cause_objects.length; i++) {
+        var c = cause_objects[i];
+        ajax_post('http://localhost:3000/api/v1/causes', c, (res) => {
+            success_count++;
+            console.log(res);
+            if (success_count == cause_objects.length) {
+                window_close();
+            }
+        }, () => {
+            console.log(c);
+        });
+    }
 }
 
 function court_name_get() {

@@ -4,7 +4,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         chrome.tabs.sendMessage(tab.id, {
             greeting: "browser_action_clicked"
         }, null, function(response) {
-            chrome.browserAction.setBadgeText({text: 'Z'});
+            chrome.browserAction.setBadgeText({text: 'L'});
             console.log(response);
         });
     }
