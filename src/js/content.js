@@ -29,32 +29,40 @@ function scanCause() {
 
     var cause_objects = [];
     var active_heading = false;
-    var tr_all = document.querySelectorAll('form[name="form1"] table tr');
+    var active_sl = false;
+    var form = document.querySelector('form[name="form1"]');
+    var tr_all = form.querySelectorAll(':scope > table > tbody > tr');
     tr_all.forEach(function (cause, index) {
-        var first_td = cause.querySelector('td');
+        var first_td = cause.querySelector(':scope > td');
+        
 
         if (first_td) {
+            var second_td = cause.querySelectorAll(':scope > td')[1];
+            var third_td = cause.querySelectorAll(':scope > td')[2];
+
             var first_td_textContent = first_td.textContent.trim();
             if (first_td_textContent == 'Sl') {
                 active_heading = tr_all[index - 1].textContent
             }
             if (first_td_textContent > 0) {
+                active_sl = first_td_textContent;
+            }
+            if (first_td_textContent > 0 || first_td_textContent == '') {
                 var cause_obj = {};
                 cause_obj.court_name = court_name;
                 cause_obj.court_date = court_date;
-                cause_obj.case_sl = first_td_textContent;
+                cause_obj.case_sl = active_sl;
 
-                var case_string = string_purge(cause.querySelectorAll('td')[1].innerText);
+                var case_string = string_purge(second_td.innerText);
                 cause_obj.case_type = case_string.split(/[0-9]/)[0].trim();
                 cause_obj.case_number = case_string.split(cause_obj.case_type)[1].trim();
                 cause_obj.case_heading = active_heading;
-                cause_obj.case_parties = string_purge(cause.querySelectorAll('td')[2].innerText);
+                cause_obj.case_parties = string_purge(third_td.innerText);
                 console.log(cause_obj);
                 cause_objects.push(cause_obj);
             }
         }
     });
-
     var success_count = 0;
     for (var i = 0; i < cause_objects.length; i++) {
         var c = cause_objects[i];
