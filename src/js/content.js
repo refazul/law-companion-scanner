@@ -47,7 +47,7 @@ function scanCause() {
             if (first_td_textContent > 0) {
                 active_sl = first_td_textContent;
             }
-            if (first_td_textContent > 0 || first_td_textContent == '') {
+            if (first_td_textContent > 0 || (first_td_textContent == '' && second_td && third_td)) {
                 var cause_obj = {};
                 cause_obj.court_name = court_name;
                 cause_obj.court_date = court_date;
@@ -66,7 +66,7 @@ function scanCause() {
     var success_count = 0;
     for (var i = 0; i < cause_objects.length; i++) {
         var c = cause_objects[i];
-        ajax_post('http://localhost:3000/api/v1/causes', c, (res) => {
+        ajax_post('https://crescentcoder.com/api/v1/causes', c, (res) => {
             success_count++;
             console.log(res);
             if (success_count == cause_objects.length) {
